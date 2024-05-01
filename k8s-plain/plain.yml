@@ -1,0 +1,283 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: e-com
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: e-com
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.4.29
+          command:
+            - "numactl"
+            - "--interleave=all"
+            - "mongod"
+            - "--wiredTigerCacheSizeGB"
+            - "0.1"
+            - "--bind_ip"
+            - "0.0.0.0"
+          ports:
+            - containerPort: 27017
+
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-pass
+
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+      volumes: 
+      - name: mongo-data
+        persistentVolumeClaim:
+          claimName: mongo-pvc
+  # volumeClaimTemplates:
+  #   - metadata:
+  #       name: mongo-data
+  #     spec:
+  #       accessModes: ["ReadWriteOnce"]
+  #       storageClassName: manual
+  #       resources:
+  #         requests:
+  #           storage: 250Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: e-com
+spec:
+  selector:
+    app: mongo
+  ports:
+    - name: mongodb-service
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+  namespace: e-com
+spec:
+  capacity:
+    storage: 250Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /data/db
+  claimRef:
+    namespace: e-com
+    name: mongo-pvc
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: e-com
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 250Mi
+  storageClassName: ""
+
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-secret
+  namespace: e-com
+type: Opaque
+data:
+  mongo-user: YWRtaW4= #admin
+  mongo-pass: cGFzc3dvcmQxMjM= #password123
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: e-com
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%  
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: faizan44/e-com_micro_backend
+          ports:
+            - containerPort: 3000
+          # do not want pull image bcoz will not change anything in backend, for testing.
+          # imagePullPolicy: Always
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://mongodb-service:27017/e-commerce"
+            - name: PORT
+              value: "8000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-pass
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: e-com
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: api
+      protocol: TCP
+      port: 8000
+
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: e-com
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%  
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: faizan44/e-com_micro_frontend
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+          env:
+            - name: REACT_APP_API_URL
+              # With this containers inside the cluster can comunicate
+              # value: api
+
+              # value: http://192.168.0.12:8000
+              value: http://192.168.0.12
+
+              # Use this to access outside AWS
+              # value: http://<< ALB >>
+
+          # resources:
+          #   requests:
+          #     memory: "64Mi"
+          #     cpu: "250m"
+          #   limits:
+          #     memory: "128Mi"
+          #     cpu: "500m"
+          # resources:
+          #   requests:
+          #     memory: "128Mi"
+          #     cpu: "500m"
+          #   limits:
+          #     memory: "256Mi"
+          #     cpu: "1000m"
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: e-com
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+
