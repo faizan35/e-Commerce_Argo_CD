@@ -29,6 +29,23 @@ kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/rele
 
 - Follow the steps form [here]().
 
+## Task 2: Creating the GitOps Pipeline
+
+### 2.1. Dockerize the Application
+
+> We will be creating a CI/CD Jenkins Pipeline, to Build and Upload the image to DockerHub.
+> But for now, we will do this step manually.
+
+##### Docker Image in DockerHub Registry
+
+1. **Frontend Image:** `faizan44/e-com_micro_frontend:latest`
+
+2. **Backend Image**: `faizan44/e-com_micro_backend:latest`
+
+### 2.2. Deploy the Application Using Argo CD:
+
+-
+
 ---
 
 This project is designed as an example of an e-commerce application using **microservices architecture**. It consists of separate components for the backend, frontend, and a MongoDB database for storing product information.
