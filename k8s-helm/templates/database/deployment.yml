@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: e-com
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.4.29
+          command:
+            - "numactl"
+            - "--interleave=all"
+            - "mongod"
+            - "--wiredTigerCacheSizeGB"
+            - "0.1"
+            - "--bind_ip"
+            - "0.0.0.0"
+          ports:
+            - containerPort: 27017
+
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-pass
+
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+      volumes: 
+      - name: mongo-data
+        persistentVolumeClaim:
+          claimName: mongo-pvc
+  # volumeClaimTemplates:
+  #   - metadata:
+  #       name: mongo-data
+  #     spec:
+  #       accessModes: ["ReadWriteOnce"]
+  #       storageClassName: manual
+  #       resources:
+  #         requests:
+  #           storage: 250Mi

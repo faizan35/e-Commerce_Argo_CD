@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: e-com
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%  
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: faizan44/e-com_micro_frontend
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+          env:
+            - name: REACT_APP_API_URL
+              # With this containers inside the cluster can comunicate
+              # value: api
+
+              # value: http://192.168.0.12:8000
+              value: http://192.168.0.12
+
+              # Use this to access outside AWS
+              # value: http://<< ALB >>
+
+          # resources:
+          #   requests:
+          #     memory: "64Mi"
+          #     cpu: "250m"
+          #   limits:
+          #     memory: "128Mi"
+          #     cpu: "500m"
+          # resources:
+          #   requests:
+          #     memory: "128Mi"
+          #     cpu: "500m"
+          #   limits:
+          #     memory: "256Mi"
+          #     cpu: "1000m"

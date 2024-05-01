@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: e-com
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%  
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: faizan44/e-com_micro_backend
+          ports:
+            - containerPort: 3000
+          # do not want pull image bcoz will not change anything in backend, for testing.
+          # imagePullPolicy: Always
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://mongodb-service:27017/e-commerce"
+            - name: PORT
+              value: "8000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-pass
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
