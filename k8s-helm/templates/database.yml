@@ -62,3 +62,69 @@ spec:
   #       resources:
   #         requests:
   #           storage: 250Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: e-com
+spec:
+  selector:
+    app: mongo
+  ports:
+    - name: mongodb-service
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+  namespace: e-com
+spec:
+  capacity:
+    storage: 250Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /data/db
+  claimRef:
+    namespace: e-com
+    name: mongo-pvc
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: e-com
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 250Mi
+  storageClassName: ""
+
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-secret
+  namespace: e-com
+type: Opaque
+data:
+  mongo-user: YWRtaW4= #admin
+  mongo-pass: cGFzc3dvcmQxMjM= #password123
