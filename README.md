@@ -1,5 +1,7 @@
 # Microservices E-commerce
 
+- `git clone https://github.com/faizan35/e-Commerce_Argo_CD.git`
+
 ## Task 1: Setup and Configuration
 
 ### 1.1. Install Argo CD on Your Kubernetes Cluster:
