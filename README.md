@@ -1,5 +1,36 @@
 # Microservices E-commerce
 
+## Task 1: Setup and Configuration
+
+### 1.1. Install Argo CD on Your Kubernetes Cluster:
+
+- Best practice in production is to deploy Argo in a separate cluster with high availability.
+- This ensures Argo remains unaffected by outages in other Kubernetes clusters, maintaining smooth continuous delivery operations.
+- But this is a Demo Project anything will work.
+- Documentation: [link](https://argo-cd.readthedocs.io/en/stable/getting_started/)
+
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+#### 1.1.1 To use the GUI
+
+- Follow the steps form [here]().
+
+### 1.2. Install Argo Rollouts:
+
+```bash
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+```
+
+#### 1.2.1 To use the GUI
+
+- Follow the steps form [here]().
+
+---
+
 This project is designed as an example of an e-commerce application using **microservices architecture**. It consists of separate components for the backend, frontend, and a MongoDB database for storing product information.
 
 <img src="./Resource/frontpage.png">
