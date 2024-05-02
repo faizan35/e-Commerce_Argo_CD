@@ -154,6 +154,12 @@ and commit the changes.
 
 [![YouTube Video](./Img/webhook-thumnail.png)](https://youtu.be/P0Xmw7V5a5s)
 
+---
+
+- new
+
+[![Image Alt Text Here](./Img/webhook-thumnail.png)]([https://youtu.be/P0Xmw7V5a5s])
+
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
 ### 3.1. Apply Rollout manifest
