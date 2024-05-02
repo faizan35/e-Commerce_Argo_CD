@@ -2,6 +2,8 @@
 
 - `git clone https://github.com/faizan35/e-Commerce_Argo_CD.git`
 
+<img src="./Img/Homepage.png">
+
 ### Prerequisites
 
 ### For EKS
@@ -143,6 +145,7 @@ and commit the changes.
 - Click on `Add Webhook`
 
 - <img src="./Img/webhook.png">
+- <img src="./Img/webhook-tick.png">
 
 ##### Testing Webhook
 
@@ -153,21 +156,76 @@ and commit the changes.
 
 ---
 
+- dfdfd
+
+<iframe src="https://youtu.be/uKi1FkwvVks?si=rry7VV5kptKUDzFx" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+
+---
+
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
-- kubectl apply -f https://raw.githubusercontent.com/faizan35/e-Commerce_Argo_CD/main/Argo-Rollout/rollout.yml -n e-com
+### 3.1. Apply Rollout manifest
 
-- kubectl apply -f https://raw.githubusercontent.com/faizan35/e-Commerce_Argo_CD/main/Argo-Rollout/service.yml -n e-com
+```bash
+kubectl apply -f https://raw.githubusercontent.com/faizan35/e-Commerce_Argo_CD/main/Argo-Rollout/rollout.yml -n e-com
+kubectl apply -f https://raw.githubusercontent.com/faizan35/e-Commerce_Argo_CD/main/Argo-Rollout/service.yml -n e-com
+```
 
-- kubectl argo rollouts get rollout frontend-rollout -n e-com --watch
+- To Delete rollout: `kubectl delete rollout frontend-rollout -n e-com`
 
-- deelte rollout: `kubectl delete rollout frontend-rollout -n e-com`
+#### View Rollout in CLI
+
+```bash
+kubectl argo rollouts get rollout frontend-rollout -n e-com --watch
+```
+
+<img src="./Img/Rollout-CLI.png">
+
+#### View Rollout in Dashboard
+
+<img src="./Img/rollout-gui1.png">
+<img src="./Img/rollout-gui2.png">
+
+#### Strategy Explanation
+
+```bash
+strategy:
+  canary:
+    steps:
+    - setWeight: 25
+    - pause: {}
+    - setWeight: 50
+    - pause: {duration: 10}
+    - setWeight: 75
+    - pause: {duration: 10}
+```
+
+- `canary`: Indicates that the rollout will use a canary deployment strategy.
+- `steps`: Specifies a list of steps that define how the canary deployment will proceed.
+
+**The steps are as follows:**
+
+1.  `setWeight: 25`: Initially, 25% of the traffic will be routed to the new version of the application.
+2.  `pause: {}`: A pause is introduced after the first step, allowing time for monitoring and evaluation.
+3.  `setWeight: 50`: After the pause, the traffic weight is increased to 50%, meaning half of the traffic will now be directed to the new version.
+4.  `pause: {duration: 10}`: Another pause follows, this time for a duration of 10 seconds.
+5.  `setWeight: 75`: Subsequently, the traffic weight is further increased to 75%, with only 25% of the traffic now being directed to the old version.
+6.  `pause: {duration: 10}`: Another pause is introduced, again for a duration of 10 seconds.
 
 ## Task 4: Documentation and Cleanup
 
 ### Cleanup
 
-- To delete the EKS cluster.
+#### Delete the application from your cluster
+
+- Click on Delete button, as show in the image.
+
+<img src="./Img/delete1.png">
+<img src="./Img/delete2.png">
+<img src="./Img/delete3.png">
+<img src="./Img/delete4.png">
+
+#### Delete the EKS cluster
 
 ```bash
 eksctl delete cluster --name e-com-cluster --region us-west-2
