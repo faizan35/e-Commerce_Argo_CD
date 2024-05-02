@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: frontend
+  name: frontend-rollout
 spec:
   replicas: 1
   strategy:
