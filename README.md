@@ -152,15 +152,11 @@ and commit the changes.
 - frontend deployment, inside `k8s-plain/plain.yml` make `spec.replicas` count to 3, and commit changes.
 - See the below video.
 
-<!-- [![YouTube Video](./Img/webhook-thumnail.png)](https://youtu.be/P0Xmw7V5a5s) -->
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/P0Xmw7V5a5s" frameborder="0" allowfullscreen></iframe>
+[![YouTube Video](./Img/webhook-thumnail.png)](https://youtu.be/P0Xmw7V5a5s)
 
 ---
 
-- nww
-
-<iframe width="560" height="315" src="https://youtu.be/P0Xmw7V5a5s" frameborder="0" allowfullscreen></iframe>
+[![YouTube Video](./Img/webhook-thumnail.png)](https://www.youtube.com/embed/P0Xmw7V5a5s)
 
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
