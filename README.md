@@ -149,9 +149,23 @@ and commit the changes.
 - frontend deployment, inside `k8s-plain/plain.yml` make `spec.replicas` count to 3, and commit changes.
 - See the below video.
 
+src="./Img/webhook-testing.webm"
+
+![vvvvv](./Img/webhook-testing.mp4)
+
 <video width="320" height="240" controls>
-  <source src="./Img/webhook-testing.webm" type="video/mp4">
+  <source src="https://drive.google.com/file/d/19meun8AOTGhXexsLHLBSUbjkY13xtRkW/view?usp=sharing" type="video/mp4">
 </video>
+
+<video width="320" height="240" controls>
+  <source src="./Img/webhook-testing.mp4">
+</video>
+
+<video width="320" height="240" controls>
+  <source src="https://www.youtube.com/watch?v=uKi1FkwvVks&ab_channel=Raju">
+</video>
+
+---
 
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
@@ -174,157 +188,6 @@ eksctl delete cluster --name e-com-cluster --region us-west-2
 ```
 
 ---
-
-This project is designed as an example of an e-commerce application using **microservices architecture**. It consists of separate components for the backend, frontend, and a MongoDB database for storing product information.
-
-<img src="./Resource/frontpage.png">
-
-## Setting EKS Cluster on AWS - [here](./EKS-Setup/Steps-To-EKS.md)
-
-###### Video Comming Soon...
-
-## Jenkins Server setup with Terraform - [here](./Jenkins-Steup-Terraform-Ansible/Setting-Jenkins-server.md)
-
-###### Video Comming Soon...
-
-## CI/CD Pipeline for Deployment/Rollback - [here](./cicd-pipeline-jenkins/cicd-pipeline.md)
-
-###### Video Comming Soon...
-
----
-
-## Getting Started for Develpment
-
-**To run the project locally, follow these steps:**
-
-##### 1. Clone Repo
-
-```bash
-git clone https://github.com/faizan35/e-Commerce_Microservices_Communication.git
-```
-
-```bash
-cd e-Commerce_Microservices_Communication/
-```
-
-##### 2. cd and install
-
-```bash
-bash ./scripts/npm_install.sh
-```
-
-##### 3. Create `.env` files
-
-- Inside `/backend` dir.
-
-  ```env
-  MONGODB_URI=mongodb://127.0.0.1:27017/e-commerce
-  # MONGODB_USER=admin
-  # MONGODB_PASS=password123
-
-  # USE_DB_AUTH=true
-
-  PORT=8000
-  HOST=0.0.0.0
-  ```
-
-- Inside `/frontend` dir.
-  ```env
-  REACT_APP_API_URL=http://localhost:8000
-  ```
-
-##### 4. Start (frontend, backend and database)
-
-Open teminals, execute both command in both of them.
-
-1. Run MongoDB Server.
-2. Execute frontend first.
-
-   ```bash
-   cd frontend
-   npm start
-   ```
-
-3. Execute backend then.
-
-   ```bash
-   node backend/backend.js
-   ```
-
-##### 5. Access the frontend in your browser at http://localhost:3000.
-
-## Docker
-
-### Build Docker Images
-
-1. Frontend
-
-```bash
-cd frontend/
-sudo docker build -t faizan44/e-com_micro_frontend:latest .
-```
-
-2. Backend
-
-```bash
-cd backend/
-sudo docker build -t faizan44/e-com_micro_backend:latest .
-```
-
-### Push to DockerHub
-
-- `sudo docker push faizan44/e-com_micro_frontend`
-- `sudo docker push faizan44/e-com_micro_backend`
-
-### Run with Docker-Compose
-
-1. Install Docker-Compose
-
-```bash
-sudo apt  install docker-compose
-```
-
-2. Run
-
-```bash
-docker-compose up -d
-```
-
-3. down
-
-```bash
-docker-compose down
-```
-
-### Pull from DockerHUB and Run
-
-1. Pull both images.
-
-   ```bash
-   sudo docker pull faizan44/e-com_micro_frontend
-   sudo docker pull faizan44/e-com_micro_backend
-   ```
-
-2. Create `docker-compose.yml` file
-
-- Just replace this,
-  ```yaml
-  build:
-  context: ./frontend
-  ```
-- With
-
-  ```yaml
-  image: faizan44/e-com_micro_frontend
-  ```
-
-- Do same for **backend**, and run.
-
-3. Run this command where your `docker-compose.yml` file is located.
-
-```bash
-docker-compose up -d
-```
 
 ## API Endpoints
 
