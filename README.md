@@ -1,6 +1,6 @@
 # Microservices E-commerce
 
-- `git clone https://github.com/faizan35/e-Commerce_Argo_CD.git`
+Automated GitOps pipeline leveraging Argo CD and Argo Rollouts for seamless continuous deployment and advanced release strategies in Kubernetes.
 
 <img src="./Img/Homepage.png">
 
