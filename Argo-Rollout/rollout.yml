@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: frontend-rollout
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: faizan44/e-com_micro_frontend
+          ports:
+            - containerPort: 3000
+          # imagePullPolicy: Always
+          env:
+            - name: REACT_APP_API_URL
+              value: http://192.168.0.12
+  strategy:
+    canary:
+      steps:
+      - setWeight: 25
+        pause: {}
+      - setWeight: 50
+        pause: {duration: 10}
+      - setWeight: 75
+        pause: {duration: 10}
