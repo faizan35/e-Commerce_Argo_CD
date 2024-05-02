@@ -156,6 +156,12 @@ and commit the changes.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/P0Xmw7V5a5s" frameborder="0" allowfullscreen></iframe>
 
+---
+
+- nww
+
+<iframe width="560" height="315" src="https://youtu.be/P0Xmw7V5a5s" frameborder="0" allowfullscreen></iframe>
+
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
 ### 3.1. Apply Rollout manifest
