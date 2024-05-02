@@ -160,10 +160,8 @@ and commit the changes.
 
 ---
 
-<video width="320" height="240" controls>
-  <source src="https://www.youtube.com/embed/P0Xmw7V5a5s" type="video/mp4">
-  YouTube Video
-</video>
+<iframe width="420" height="345" src="https://www.youtube.com/embed/P0Xmw7V5a5s?autoplay=1&mute=1">
+</iframe>
 
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
