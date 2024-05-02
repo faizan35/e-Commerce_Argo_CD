@@ -2,9 +2,19 @@
 
 - `git clone https://github.com/faizan35/e-Commerce_Argo_CD.git`
 
+### Prerequisites
+
+### For EKS
+
+- AWS account
+
 ## Task 1: Setup and Configuration
 
-### 1.1. Install Argo CD on Your Kubernetes Cluster:
+### 1.1. Setting up EKS Cluster
+
+- Follow the detailed guide to setup you EKS cluster. [here](./EKS-Setup/Steps-To-EKS.md)
+
+### 1.2. Install Argo CD on Your Kubernetes Cluster:
 
 - Best practice in production is to deploy Argo in a separate cluster with high availability.
 - This ensures Argo remains unaffected by outages in other Kubernetes clusters, maintaining smooth continuous delivery operations.
@@ -16,20 +26,30 @@ kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-#### 1.1.1 To use the GUI
+#### 1.2.1 To use the GUI
 
-- Follow the steps form [here]().
+- Follow the steps form [here](https://github.com/faizan35/Argo_CD_Mastery_Hub/blob/main/Module-02/2.1-Installation-Methods.md).
 
-### 1.2. Install Argo Rollouts:
+- **For Minikube only**, port forwarding: `minikube service argocd-server -n argocd`
+- **For EKS**:
+  - Expose the `NodePort` of `argocd-server` service in your aws security group.
+  - to access the dashboard use the ip address of the node-group and port `NordPort`.
+
+### 1.3. Install Argo Rollouts:
 
 ```bash
 kubectl create namespace argo-rollouts
 kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 ```
 
-#### 1.2.1 To use the GUI
+#### 1.3.1 To use the GUI
 
-- Follow the steps form [here]().
+- Follow the steps form [here](https://github.com/faizan35/Argo_CD_Mastery_Hub/blob/main/Module-0x/x.1-Installation-Methods.md).
+
+- **For EKS**:
+  - For dashboard you hava to use the IP of the VM in which you are executing the commands.
+  - Expose the `3100` Port in your security group, of the VM.
+  - open a new terminal and execute this command to see the dashboard: `http://<IP>:3100/rollouts`
 
 ## Task 2: Creating the GitOps Pipeline
 
@@ -46,7 +66,112 @@ kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/rele
 
 ### 2.2. Deploy the Application Using Argo CD:
 
--
+#### 2.2.1. For Minikube Setup only
+
+- access the Frontend.: `minikube service frontend-service -n e-com`
+
+- Port forwardding or tunnelling: `minikube service api -n e-com`
+
+- Paste the `http://<IP>:<PORT>`, in the fronend deployment manifest.
+
+#### 2.2.2. For EKS
+
+##### 2.2.2.1. Paste the copied ingress endpoint to...
+
+- frontend deployment, inside `k8s-plain/plain.yml` value of `REACT_APP_API_URL`.
+- rollout manifest here, inside `Argo-Rollout/rollout.yml` value of `REACT_APP_API_URL`.
+
+and commit the changes.
+
+> **Note:** this is done if you dont have a domain.
+
+##### 2.2.2.2. Creating Application with Argo CD
+
+1. After login into the ArgoCD dashboard.
+
+  <img src="./Img/argocd-dashboard.png">
+
+1. Click on `+ NEW APP`
+2. Click on `EDIT AS YAML`
+3. Paste this yaml and click on `SAVE`
+
+   ```yml
+   apiVersion: argoproj.io/v1alpha1
+   kind: Application
+   metadata:
+     name: e-commerce
+   spec:
+     destination:
+       name: ""
+       namespace: e-com
+       server: "https://kubernetes.default.svc"
+     source:
+       path: k8s-plain
+       repoURL: "https://github.com/faizan35/e-Commerce_Argo_CD"
+       targetRevision: HEAD
+     sources: []
+     project: default
+     syncPolicy:
+       automated:
+         prune: false
+         selfHeal: false
+   ```
+
+4. Click on `CREATE`
+
+- Your Applications should start creating.
+
+<img src="./Img/start-creating.png">
+
+<img src="./Img/app-tree.png">
+
+#### 2.2.2.3. Argo CD to monitor the Repository
+
+##### a. With Jenkins CI/CD Pipeline
+
+- We will trigger ArgoCD by jenkins POST build pipeline. It will trigger the webhook associated with ArgoCD.
+
+##### b. Without Jenkins
+
+- We will set the webhook but we will manually make commit to the git repo.
+
+##### Setting the Webhook
+
+- **Payload**: `https://34.220.39.20:30828/api/webhook`
+- **Payload**: `application/json`
+
+- Click on `Add Webhook`
+
+- <img src="./Img/webhook.png">
+
+##### Testing Webhook
+
+- frontend deployment, inside `k8s-plain/plain.yml` make `spec.replicas` count to 3, and commit changes.
+- See the below video.
+
+<video width="320" height="240" controls>
+  <source src="./Img/webhook-testing.webm" type="video/mp4">
+</video>
+
+## Task 3: Implementing a Canary Release with Argo Rollouts
+
+- kubectl apply -f https://raw.githubusercontent.com/faizan35/e-Commerce_Argo_CD/main/Argo-Rollout/rollout.yml -n e-com
+
+- kubectl apply -f https://raw.githubusercontent.com/faizan35/e-Commerce_Argo_CD/main/Argo-Rollout/service.yml -n e-com
+
+- kubectl argo rollouts get rollout frontend-rollout -n e-com --watch
+
+- deelte rollout: `kubectl delete rollout frontend-rollout -n e-com`
+
+## Task 4: Documentation and Cleanup
+
+### Cleanup
+
+- To delete the EKS cluster.
+
+```bash
+eksctl delete cluster --name e-com-cluster --region us-west-2
+```
 
 ---
 
