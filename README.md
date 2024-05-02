@@ -163,6 +163,12 @@ and commit the changes.
 <iframe width="420" height="345" src="https://www.youtube.com/embed/P0Xmw7V5a5s?autoplay=1&mute=1">
 </iframe>
 
+---
+
+- embedd
+
+[![YouTube Video](./Img/webhook-thumnail.png)](https://www.youtube.com/embed/P0Xmw7V5a5s?autoplay=1&mute=1)
+
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
 ### 3.1. Apply Rollout manifest
