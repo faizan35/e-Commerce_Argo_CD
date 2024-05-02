@@ -246,10 +246,12 @@ spec:
               # value: api
 
               # value: http://192.168.0.12:8000
-              value: http://192.168.0.12
+              # value: http://192.168.0.12
 
               # Use this to access outside AWS
+              
               # value: http://<< ALB >>
+              value: http://k8s-ecom-mainlb-0ae5991ed5-1842540559.us-west-2.elb.amazonaws.com
 
           # resources:
           #   requests:
