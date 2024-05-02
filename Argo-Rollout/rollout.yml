@@ -20,7 +20,7 @@ spec:
           # imagePullPolicy: Always
           env:
             - name: REACT_APP_API_URL
-              value: http://192.168.0.12
+              value: http://k8s-ecom-mainlb-0ae5991ed5-1842540559.us-west-2.elb.amazonaws.com
   strategy:
     canary:
       steps:
