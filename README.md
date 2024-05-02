@@ -180,16 +180,16 @@ kubectl argo rollouts get rollout frontend-rollout -n e-com --watch
 
 #### Strategy Explanation
 
-```bash
+```yaml
 strategy:
   canary:
     steps:
-    - setWeight: 25
-    - pause: {}
-    - setWeight: 50
-    - pause: {duration: 10}
-    - setWeight: 75
-    - pause: {duration: 10}
+      - setWeight: 25
+      - pause: {}
+      - setWeight: 50
+      - pause: { duration: 10 }
+      - setWeight: 75
+      - pause: { duration: 10 }
 ```
 
 - `canary`: Indicates that the rollout will use a canary deployment strategy.
