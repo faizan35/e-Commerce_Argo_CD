@@ -149,21 +149,7 @@ and commit the changes.
 - frontend deployment, inside `k8s-plain/plain.yml` make `spec.replicas` count to 3, and commit changes.
 - See the below video.
 
-src="./Img/webhook-testing.webm"
-
-![vvvvv](./Img/webhook-testing.mp4)
-
-<video width="320" height="240" controls>
-  <source src="https://drive.google.com/file/d/19meun8AOTGhXexsLHLBSUbjkY13xtRkW/view?usp=sharing" type="video/mp4">
-</video>
-
-<video width="320" height="240" controls>
-  <source src="./Img/webhook-testing.mp4">
-</video>
-
-<video width="320" height="240" controls>
-  <source src="https://www.youtube.com/watch?v=uKi1FkwvVks&ab_channel=Raju">
-</video>
+[![YouTube Video](./Img/webhook-thumnail.png)](https://youtu.be/uKi1FkwvVks?si=rry7VV5kptKUDzFx)
 
 ---
 
