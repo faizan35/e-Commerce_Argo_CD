@@ -158,6 +158,13 @@ and commit the changes.
 
 [![YouTube Video](./Img/webhook-thumnail.png)](https://www.youtube.com/embed/P0Xmw7V5a5s)
 
+---
+
+<video width="320" height="240" controls>
+  <source src="https://www.youtube.com/embed/P0Xmw7V5a5s" type="video/mp4">
+  YouTube Video
+</video>
+
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
 ### 3.1. Apply Rollout manifest
