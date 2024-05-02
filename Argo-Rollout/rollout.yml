@@ -1,9 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: frontend-rollout
+  name: frontend
 spec:
   replicas: 1
+  strategy:
+    canary:
+      steps:
+      - setWeight: 25
+        pause: {}
+      - setWeight: 50
+        pause: {duration: 10}
+      - setWeight: 75
+        pause: {duration: 10}
   selector:
     matchLabels:
       app: frontend
@@ -21,12 +30,3 @@ spec:
           env:
             - name: REACT_APP_API_URL
               value: http://k8s-ecom-mainlb-0ae5991ed5-1842540559.us-west-2.elb.amazonaws.com
-  strategy:
-    canary:
-      steps:
-      - setWeight: 25
-        pause: {}
-      - setWeight: 50
-        pause: {duration: 10}
-      - setWeight: 75
-        pause: {duration: 10}

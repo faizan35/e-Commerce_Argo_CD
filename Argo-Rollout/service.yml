@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-rollout-service
+  name: frontend-service
   namespace: e-com
 spec:
   selector:
