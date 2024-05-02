@@ -1,7 +1,5 @@
 # Steps for setting EKS Cluster on AWS
 
-
-
 ### 1. EC2 Setup
 
 - Launch an Ubuntu instance.
@@ -19,7 +17,7 @@ sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin --update
 
 #### Configure AWS
 
-- Create a **IAM User** `eks-Pro` with `AdministratorAccess`.
+- Create a **IAM User** `argo-cd` with `AdministratorAccess`.
 - Generate Security Credentials: **Access Key** and **Secret Access Key**.
 - Configure your EC2 with keys created.
 
@@ -52,7 +50,7 @@ eksctl version
 
 ### 5. Setup EKS Cluster
 
-- It will create an EKS cluster named **"e-com-cluster"** in the **us-west-2 region** with a **node group** consisting of EC2 instances of type **t2.medium**. 
+- It will create an EKS cluster named **"e-com-cluster"** in the **us-west-2 region** with a **node group** consisting of EC2 instances of type **t2.medium**.
 - The node group will have a minimum of 2 instances and a maximum of 2 instances.
 - See all the options [here](../Resource/create-eks-cluster.md): `eksctl create cluster --help`
 
@@ -67,13 +65,13 @@ eksctl create cluster \
 ```
 
 - **Cluster Created.**
-<img src="../Resource/cluster-created.png" width="75%">
+  <img src="../Resource/cluster-created.png" width="75%">
 
 - **Worker Nodes**
-<img src="../Resource/worker-nodes.png" width="75%">
+  <img src="../Resource/worker-nodes.png" width="75%">
 
 - Creates **Identity Provider** `--with-oidc`: OIDC allows your K8s cluster to use IAM for authentication to AWS services.
-<img src="../Resource/Identity-Provider.png" width="75%">
+  <img src="../Resource/Identity-Provider.png" width="75%">
 
 #### Create **kubeconfig** file automatically
 
@@ -88,7 +86,7 @@ kubectl get nodes
 
 #### 6.1 Create IAM Role using `eksctl`
 
-- **First Command:** Download's the file `iam_policy.json`. 
+- **First Command:** Download's the file `iam_policy.json`.
 - **Second Command:** Create an IAM policy using the policy downloaded in the previous step.
 
 ```bash
@@ -100,9 +98,8 @@ aws iam create-policy \
 ```
 
 - **IAM policy Created**
-<img src="../Resource/IAM-policy-Created.png" width="75%">
-<img src="../Resource/IAM-policy-Created-AWS.png" width="75%">
-
+  <img src="../Resource/IAM-policy-Created.png" width="75%">
+  <img src="../Resource/IAM-policy-Created-AWS.png" width="75%">
 
 ##### Create IAM Service Account `eksctl`.
 
@@ -117,16 +114,16 @@ eksctl create iamserviceaccount \
   --attach-policy-arn=arn:aws:iam::<YOUR_AWS_ACC_NO>:policy/AWSLoadBalancerControllerIAMPolicy \
   --region=us-west-2 \
   --approve
-``` 
+```
 
 - **IAM Service Account Created**
-<img src="../Resource/IAM-Service-Account.png" width="75%">
+  <img src="../Resource/IAM-Service-Account.png" width="75%">
 
 #### 6.2 Install AWS Load Balancer Controller
 
 - Here we will install `aws-load-balancer-controller`, which is Pod that will create Application Load Balancer by reading the `ingress.yml` manifest, or we can say it will apply all the rules mentioned in `ingress.yml` to the ALB.
 
-``` bash
+```bash
 sudo snap install helm --classic
 helm repo add eks https://aws.github.io/eks-charts
 helm repo update eks
@@ -135,15 +132,14 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system \
   --set clusterName=e-com-cluster \
   --set serviceAccount.create=false \
-  --set serviceAccount.name=aws-load-balancer-controller 
+  --set serviceAccount.name=aws-load-balancer-controller
 ```
 
 - **Helm & AWS LB Installed**
-<img src="../Resource/Helm-AWS-LB.png" width="75%">
+  <img src="../Resource/Helm-AWS-LB.png" width="75%">
 
 - **Load Balancer Created**
-<img src="../Resource/Load-Balancer.png" width="75%">
-
+  <img src="../Resource/Load-Balancer.png" width="75%">
 
 #### 6.3 Verify that the controller is installed
 
@@ -154,71 +150,22 @@ kubectl get deployment -n kube-system aws-load-balancer-controller
 ```
 
 - **Verify the controller**
-<img src="../Resource/Verify-controller.png" width="75%">
-
+  <img src="../Resource/Verify-controller.png" width="75%">
 
 ### 7. Apply Ingerss
 
-``` bash
-kubectl apply -f ingress.yml
+```bash
+kubectl create namespace e-com
+kubectl apply -f https://raw.githubusercontent.com/faizan35/e-Commerce_Argo_CD/main/k8s/ingress.yml
 ```
 
-``` bash
+```bash
 kubectl get ing -n e-com
 ```
 
 - Copy the **ADDRESS**.
 
 - **Ingerss Created**
-<img src="../Resource/Ingerss-Created.png" width="75%">
-
-
-### 8. Apply k8s Manifests files
-
-```bash
-git clone https://github.com/faizan35/e-Commerce_Microservices_Communication.git
-cd e-Commerce_Microservices_Communication/k8s
-```
-
-- Inside `frontend/` dir in `deployment.yml` manifest file replace the copied Ingress address.
-<img src="../Resource/replace-alb-address.png" width="75%">
-
-
-- Apply all with a script. (intentionally not created Helm Chart.)
-<img src="../Resource/apply-all.png" width="75%">
-
-```bash
-bash all-e-com-manifest.sh
-```
-
-### 9. Test the application
-
-- Inside your web browser visit the same URL that you pasted in the frontend `deployment.yml` manifest file.
-<img src="../Resource/alb-endpoint.png">
-
-- You will see.
-<img src="../Resource/ingress-homepage.png">
-
----
-
-### Cleanup
-
-- To delete the EKS cluster.
-
-``` bash
-eksctl delete cluster --name e-com-cluster --region us-west-2
-```
-
----
-
-### Trubleshoot
-
-- For checking DNS Resolutions is correct: `telnet mongodb-service 27017`
-- Check service resolve to IP: `kubectl exec -it -n e-com <POD NAME> -- cat /etc/resolv.conf`
-
-- This Works: `kubectl exec -it frontend-56d9bb9d98-hb2jt -n e-com -- cat /etc/hosts`
-
-- Works also: `kubectl exec -it frontend-56d9bb9d98-hb2jt -n e-com -- curl http://api:8000/api/products`
-
+  <img src="../Resource/Ingerss-Created.png" width="75%">
 
 ---
