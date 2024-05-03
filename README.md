@@ -2,6 +2,12 @@
 
 Automated GitOps pipeline leveraging Argo CD and Argo Rollouts for seamless continuous deployment and advanced release strategies in Kubernetes.
 
+#### There are two methods show here.,
+
+##### 1. Minikube (Local) - < --- In Progress --- >
+
+##### 2. AWS EKS - Completed
+
 <img src="./Img/Homepage.png">
 
 ### Prerequisites
