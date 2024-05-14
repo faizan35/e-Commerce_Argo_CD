@@ -160,7 +160,8 @@ and commit the changes.
 
 <!-- [![YouTube Video](./Img/webhook-thumnail.png)](https://www.youtube.com/embed/P0Xmw7V5a5s) -->
 
-[YouTube-Video](https://www.youtube.com/embed/P0Xmw7V5a5s)
+[YouTube-Video](https://www.youtube.com/embed/P0Xmw7V5a5s
+)
 
 ## Task 3: Implementing a Canary Release with Argo Rollouts
 
